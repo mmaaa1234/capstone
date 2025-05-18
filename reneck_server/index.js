@@ -5,11 +5,8 @@ const PORT = 3000;
 // JSON 파싱 가능하게 설정 (필요할 수도 있음)
 app.use(express.json());
 
-// 파일 업로드 처리 라우터 연결
-const uploadRouter = require("./routes/upload");
 //회원가입, 로그인 라우터 연결
 const authRouter = require("./routes/auth");
-app.use("/upload", uploadRouter);
 app.use("/auth", authRouter);
 
 //모든 도메인에서 이 서버에 접근 가능하게 허용
