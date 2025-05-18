@@ -8,10 +8,10 @@ const router = express.Router();
 // 회원가입 API
 router.post("/register", async (req, res) => {
   try {
-    const { email, password, name } = req.body; //  user_id → email
+    const { email, password, username } = req.body;
 
     // 필수 입력값 확인
-    if (!email || !password || !name) {
+    if (!email || !password || !username) {
       return res.status(400).json({ message: "필수 정보를 모두 입력하세요." });
     }
 
@@ -28,15 +28,15 @@ router.post("/register", async (req, res) => {
 
     // DB에 저장
     await db.execute(
-      "INSERT INTO users (email, password, name, created_at) VALUES (?, ?, ?, NOW())",
-      [email, hashedPassword, name]
+      "INSERT INTO users (email, password, username, created_at) VALUES (?, ?, ?, NOW())",
+      [email, hashedPassword, username]
     );
 
     res.status(201).json({
       message: "회원가입 성공",
       user: {
         email: email,
-        name: name,
+        username: username,
       },
     });
   } catch (error) {
@@ -48,7 +48,7 @@ router.post("/register", async (req, res) => {
 // 로그인 API
 router.post("/login", async (req, res) => {
   try {
-    const { email, password } = req.body; // user_id → email
+    const { email, password } = req.body;
 
     // 필수 입력값 확인
     if (!email || !password) {
@@ -74,11 +74,9 @@ router.post("/login", async (req, res) => {
     }
 
     // JWT 토큰 생성
-    const token = jwt.sign(
-      { email: user.email }, // payload 안에도 email
-      "jnp_secret_key", // 개발용 키
-      { expiresIn: "7d" }
-    );
+    const token = jwt.sign({ email: user.email }, "jnp_secret_key", {
+      expiresIn: "7d",
+    });
 
     res.json({
       message: "로그인 성공",
@@ -86,7 +84,7 @@ router.post("/login", async (req, res) => {
       user: {
         id: user.id,
         email: user.email,
-        name: user.name,
+        username: user.username,
       },
     });
   } catch (error) {
